@@ -20,15 +20,15 @@ export const bookingValdidationSchema = z.object({
         .trim()
         .min(10, "Address must be at least 10 characters"),
 
-    city: z
-        .string()
-        .trim()
-        .min(2, "City is required"),
+    // city: z
+    //     .string()
+    //     .trim()
+    //     .min(2, "City is required"),
 
-    state: z
-        .string()
-        .trim()
-        .min(2, "State is required"),
+    // state: z
+    //     .string()
+    //     .trim()
+    //     .min(2, "State is required"),
 
     pincode: z
         .string()

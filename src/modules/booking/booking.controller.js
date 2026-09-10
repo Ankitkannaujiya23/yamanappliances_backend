@@ -1,4 +1,5 @@
 import ApiResponse from "../../utils/apiResponse.js";
+import asyncHandler from "../../utils/asyncHandler.js";
 import bookingService from "./booking.service.js";
 import { bookingValdidationSchema } from "./booking.validation.js";
 
