@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
     return res.send({ status: 200, message: "Welcome to Yaman Appliances API" });
 });
 app.use("/api/contact", contactRoutes);
