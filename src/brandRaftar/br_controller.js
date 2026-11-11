@@ -12,7 +12,7 @@ const brController = {
 
             const result = await brandraftarDB.execute(
                 `insert into enquiries (name,email,phone,business_name,service,preferred_time,business_goal) values(?,?,?,?,?,?,?)`,
-                [name, email, phone, business_name || null, service || null, preferred_time || null, goal || null]
+                [name, email, phone, business_name || null, service || null, preferred_call_time || null, goal || null]
             );
 
             if (result.affectedRows > 0) {
