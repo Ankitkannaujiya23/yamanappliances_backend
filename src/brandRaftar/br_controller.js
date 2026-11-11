@@ -1,7 +1,6 @@
 import brandraftarDB from "./br_dbconfig.js";
 
-
-export const brController = {
+const brController = {
     createEnquiry: async (req, res) => {
         try {
             const { name, email, phone, business, service, preferred_time, goal } = req.body;
@@ -28,3 +27,5 @@ export const brController = {
         }
     }
 }
+
+export default brController;

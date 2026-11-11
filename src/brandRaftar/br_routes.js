@@ -1,4 +1,4 @@
-import { brController, createEnquiry } from "./br_controller.js";
+import brController from "./br_controller.js";
 
 
 const router = express.Router();
