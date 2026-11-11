@@ -1,4 +1,4 @@
-import brandraftarDB from "./br_dbconfig";
+import brandraftarDB from "./br_dbconfig.js";
 
 
 export const brController = {
