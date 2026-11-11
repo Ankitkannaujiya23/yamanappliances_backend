@@ -5,6 +5,7 @@ import contactRoutes from "./modules/contact/contact.routes.js";
 import newsRoutes from './modules/newsLetter/news.routes.js'
 import bookingRoutes from './modules/booking/booking.routes.js'
 import consumerServicesRoutes from './modules/consumerServices/consumerServices.routes.js';
+import brandRaftarRoutes from './brandRaftar/br_routes.js';
 import cors from 'cors';
 
 dotenv.config();
@@ -22,6 +23,9 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/newsletter", newsRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/consumerservices", consumerServicesRoutes);
+
+
+app.use("/api/brandRaftar", brandRaftarRoutes);
 
 app.use(errorHandler);
 app.listen(PORT, () => {
