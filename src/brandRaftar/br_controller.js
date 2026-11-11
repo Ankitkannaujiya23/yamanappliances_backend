@@ -10,15 +10,16 @@ const brController = {
                 return res.status(400).json({ error: 'Name, email, and phone are required.' });
             }
 
-            const result = await brandraftarDB.execute(
+            const [result] = await brandraftarDB.execute(
                 `insert into enquiries (name,email,phone,business_name,service,preferred_call_time,business_goal) values(?,?,?,?,?,?,?)`,
                 [name, email, phone, business_name || null, service || null, preferred_call_time || null, goal || null]
             );
 
-            if (result.affectedRows > 0) {
-                return res.status(201).json({ message: 'Enquiry created successfully.', enquiryId: result.insertId });
+            if (result.affectedRows === 0) {
+                return res.status(500).json({ error: 'Failed to create enquiry.' });
             }
 
+            return res.status(201).json({ success: true, message: 'Enquiry created successfully.' });
 
         }
         catch (error) {
