@@ -3,18 +3,27 @@ import nodemailer from "nodemailer";
 
 
 const transporter = nodemailer.createTransport({
-    host: process.env.BR_SMTP_HOST,
-    port: process.env.BR_SMTP_PORT || 587,
-    secure: process.env.BR_SMTP_SECURE === 'true',
-    auth: {
-        user: process.env.BR_SMTP_USER,
-        pass: process.env.BR_SMTP_PASS
-    }
+  host: process.env.BR_SMTP_HOST,
+  port: process.env.BR_SMTP_PORT || 587,
+  secure: process.env.BR_SMTP_SECURE === 'true',
+  auth: {
+    user: process.env.BR_SMTP_USER,
+    pass: process.env.BR_SMTP_PASS
+  }
 });
 
 
+const escapeHtml = (value = "") => {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+};
 const createRows = (fields) =>
-    fields.map(([label, value]) => `
+  fields.map(([label, value]) => `
     <tr>
       <td style="padding:11px 14px;color:#64748b;font-size:13px;">
         ${escapeHtml(label)}
@@ -28,30 +37,30 @@ const createRows = (fields) =>
 
 
 export const sendAdminEnquiryMail = async (enquiry) => {
-    const { name, email, phone, business_name, service, preferred_call_time, goal, bookingId } = enquiry;
+  const { name, email, phone, business_name, service, preferred_call_time, goal, bookingId } = enquiry;
 
-    const customerRows = createRows([
-        ["Name", name],
-        ["Phone", phone],
-        ["Email", email],
-        ["Business Name", business_name],
-        ["Service", service],
-        ["Preferred Call Time", preferred_call_time],
-        ["Goal", goal],
-    ]);
+  const customerRows = createRows([
+    ["Name", name],
+    ["Phone", phone],
+    ["Email", email],
+    ["Business Name", business_name],
+    ["Service", service],
+    ["Preferred Call Time", preferred_call_time],
+    ["Goal", goal],
+  ]);
 
-    const bookingRows = createRows([
-        ["Booking ID", bookingId],
-        ["Service", service],
-        ["Business Name", business_name],
-        ["Goal", goal],
-        ["Preferred Time", preferred_call_time],
-    ]);
-
-
+  const bookingRows = createRows([
+    ["Booking ID", bookingId],
+    ["Service", service],
+    ["Business Name", business_name],
+    ["Goal", goal],
+    ["Preferred Time", preferred_call_time],
+  ]);
 
 
-    const html = `
+
+
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -73,7 +82,7 @@ export const sendAdminEnquiryMail = async (enquiry) => {
         <tr>
           <td style="background:#142b45;padding:28px;color:#ffffff;">
             <h1 style="font-size:23px;margin:0;">
-              {{businessName}}
+              ${business_name}
             </h1>
             <p style="font-size:12px;color:#cbd5e1;letter-spacing:2px;margin:9px 0 0;">
               NEW BOOKING NOTIFICATION
@@ -105,7 +114,7 @@ export const sendAdminEnquiryMail = async (enquiry) => {
 
             <table width="100%" cellpadding="0" cellspacing="0"
               style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-              {{customerRows}}
+              ${customerRows}
             </table>
 
             <h3 style="color:#142b45;font-size:16px;margin-top:25px;">
@@ -114,7 +123,7 @@ export const sendAdminEnquiryMail = async (enquiry) => {
 
             <table width="100%" cellpadding="0" cellspacing="0"
               style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-              {{bookingRows}}
+              ${bookingRows}
             </table>
 
             <h3 style="color:#142b45;font-size:16px;margin-top:25px;">
@@ -124,7 +133,7 @@ export const sendAdminEnquiryMail = async (enquiry) => {
             <div style="background:#f8fafc;border:1px solid #e2e8f0;
               padding:15px;border-radius:8px;color:#475569;
               font-size:14px;line-height:1.7;">
-              {{message}}
+             ${escapeHtml(goal || "No description provided.")}
             </div>
 
             <div style="background:#142b45;border-radius:8px;
@@ -147,7 +156,7 @@ export const sendAdminEnquiryMail = async (enquiry) => {
         <tr>
           <td align="center" style="background:#f8fafc;padding:18px;">
             <p style="color:#94a3b8;font-size:11px;margin:0;">
-              © {{year}} {{businessName}}. All rights reserved.
+              © ${new Date().getFullYear()} Brand Raftar. All rights reserved.
             </p>
           </td>
         </tr>
@@ -162,27 +171,27 @@ export const sendAdminEnquiryMail = async (enquiry) => {
 </html>
 `;
 
-    await transporter.sendMail({
-        from: process.env.BR_SMTP_USER,
-        to: process.env.BR_ADMIN_EMAIL,
-        subject: 'New Enquiry Received',
-        html: html
-    });
+  await transporter.sendMail({
+    from: process.env.BR_SMTP_USER,
+    to: process.env.BR_ADMIN_EMAIL,
+    subject: 'New Enquiry Received',
+    html: html
+  });
 }
 
 
 export const sendUserEnquiryMail = async (enquiry) => {
-    const { name, email, phone, business_name, service, preferred_call_time, goal, bookingId } = enquiry;
+  const { name, email, phone, business_name, service, preferred_call_time, goal, bookingId } = enquiry;
 
-    const fields = [
-        ["Booking ID", bookingId],
-        ["Service", service],
-        ["Business Name", business_name],
-        ["Goal", goal],
-        ["Preferred Time", preferred_call_time],
-    ];
+  const fields = [
+    ["Booking ID", bookingId],
+    ["Service", service],
+    ["Business Name", business_name],
+    ["Goal", goal],
+    ["Preferred Time", preferred_call_time],
+  ];
 
-    const bookingRows = fields.map(([label, value]) => `
+  const bookingRows = fields.map(([label, value]) => `
   <tr>
     <td style="padding:10px 18px;color:#64748b;font-size:13px;">
       ${escapeHtml(label)}
@@ -196,13 +205,13 @@ export const sendUserEnquiryMail = async (enquiry) => {
 
 
 
-    const html = `
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Confirmation</title>
+  <title>Enquiry Confirmation</title>
 </head>
 
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
@@ -222,7 +231,7 @@ export const sendUserEnquiryMail = async (enquiry) => {
              Brand Raftar
             </h1>
             <p style="color:#cbd5e1;margin:10px 0 0;font-size:12px;letter-spacing:2px;">
-              BOOKING CONFIRMATION
+              ENQUIRY CONFIRMATION
             </p>
           </td>
         </tr>
@@ -232,7 +241,7 @@ export const sendUserEnquiryMail = async (enquiry) => {
           <td style="padding:35px 28px;">
 
             <h2 style="color:#172b45;text-align:center;font-size:25px;margin:0 0 10px;">
-              Booking Received!
+              Enquiry Received!
             </h2>
 
             <p style="color:#64748b;text-align:center;font-size:14px;margin:0 0 30px;">
@@ -240,38 +249,38 @@ export const sendUserEnquiryMail = async (enquiry) => {
             </p>
 
             <p style="color:#334155;font-size:15px;line-height:1.7;">
-              Hello <strong>{{name}}</strong>,
+              Hello <strong>${escapeHtml(name)}</strong>,
             </p>
 
             <p style="color:#475569;font-size:14px;line-height:1.8;">
-              We've successfully received your service booking request.
-              Our team will contact you shortly to confirm your appointment.
+              We're excited to learn more about your business and explore how we can help you grow online.
+Our team has successfully received your enquiry. One of our representatives will review your requirements and get in touch with you shortly.
             </p>
 
-            <!-- BOOKING DETAILS -->
+            <!-- Enquiry DETAILS -->
             <table width="100%" cellpadding="0" cellspacing="0"
               style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:25px 0;">
 
               <tr>
                 <td colspan="2" style="padding:18px 18px 12px;">
                   <h3 style="margin:0;color:#172b45;font-size:15px;">
-                    YOUR BOOKING DETAILS
+                    YOUR ENQUIRY DETAILS
                   </h3>
                 </td>
               </tr>
 
-              {{bookingRows}}
+              ${bookingRows}
 
             </table>
 
             <h3 style="color:#172b45;font-size:16px;">
-              What happens next?
+              What next?
             </h3>
 
             <p style="color:#475569;font-size:14px;line-height:1.9;">
-              1. Our team reviews your booking request.<br>
-              2. We contact you to confirm availability.<br>
-              3. A technician is assigned after confirmation.
+              1. Our team will review your requirements.<br>
+              2. We'll connect with you to understand your business goals.<br>
+              3. We'll discuss the right growth strategy for your business. <br>
             </p>
 
             <!-- CONTACT -->
@@ -294,10 +303,12 @@ export const sendUserEnquiryMail = async (enquiry) => {
             </table>
 
             <p style="color:#475569;font-size:14px;line-height:1.8;margin-top:28px;">
-              Thank you for trusting us with your service needs.
+              Whether it's Digital Marketing, SEO, Paid Advertising, Branding, or Local Business Growth, we're here to help your business move forward.
+              <br>
+              <strong style="color:#172b45;">Let's Grow Your Business.</strong>
               <br><br>
               Warm regards,<br>
-              <strong style="color:#172b45;">Brand Raftar Team</strong>
+              <strong style="color:#172b45;">Brand Raftar</strong>
             </p>
 
           </td>
@@ -307,10 +318,9 @@ export const sendUserEnquiryMail = async (enquiry) => {
         <tr>
           <td align="center" style="background:#f8fafc;padding:20px;">
             <p style="color:#94a3b8;font-size:11px;line-height:1.7;margin:0;">
-              This is an automated booking acknowledgement.
-              Please do not reply directly to this email.
+              This is an automated enquiry acknowledgement.
               <br>
-              © 2026 Brand Raftar. All rights reserved.
+              © ${new Date().getFullYear()} Brand Raftar. All rights reserved.
             </p>
           </td>
         </tr>
@@ -324,12 +334,12 @@ export const sendUserEnquiryMail = async (enquiry) => {
 </html>
 `;
 
-    await transporter.sendMail({
-        from: process.env.BR_SMTP_USER,
-        to: email,
-        subject: 'Thank you for your enquiry',
-        html: html
-    });
+  await transporter.sendMail({
+    from: process.env.BR_SMTP_USER,
+    to: email,
+    subject: 'Thank you for your enquiry',
+    html: html
+  });
 }
 
 
